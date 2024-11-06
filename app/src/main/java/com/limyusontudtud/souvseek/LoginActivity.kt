@@ -29,75 +29,94 @@ class LoginActivity : AppCompatActivity() {
             navigateToDashboard()
         }
 
-        binding.login.setOnClickListener {
-            val email = binding.emailEditText.text.toString().trim()
-            val password = binding.passwordEditText.text.toString().trim()
+        // Set up listeners for the login, signup, and forgot password actions
+        setupClickListeners()
+    }
 
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        // Save login status and email
-                        PrefsManager.setLoggedIn(this, email, true)
-                        navigateToDashboard()
-                    } else {
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
-                    }
+    private fun setupClickListeners() {
+        binding.login.setOnClickListener { performLogin() }
+        binding.textViewSignUp.setOnClickListener { navigateToSignUp() }
+        binding.forgotPassword.setOnClickListener { showForgotPasswordDialog() }
+    }
+
+    private fun performLogin() {
+        val email = binding.emailEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
+
+        if (email.isNotEmpty() && password.isNotEmpty()) {
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    PrefsManager.setLoggedIn(this, email, true)
+                    navigateToDashboard()
+                } else {
+                    showToast(task.exception.toString())
                 }
-            } else {
-                Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show()
             }
+        } else {
+            showToast("Fields cannot be empty")
+        }
+    }
+
+    private fun navigateToSignUp() {
+        Intent(this, RegistrationActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(this)
+        }
+    }
+
+    private fun showForgotPasswordDialog() {
+        val builder = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_forgot, null)
+        val userEmail = view.findViewById<EditText>(R.id.emailBox)
+
+        builder.setView(view)
+        val dialog = builder.create()
+
+        view.findViewById<Button>(R.id.btnReset).setOnClickListener {
+            handlePasswordReset(userEmail)
+            dialog.dismiss()
         }
 
-        binding.textViewSignUp.setOnClickListener {
-            val intent = Intent(this, RegistrationActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            startActivity(intent)
+        view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
         }
 
-        binding.forgotPassword.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            val view = layoutInflater.inflate(R.layout.dialog_forgot, null)
-            val userEmail = view.findViewById<EditText>(R.id.emailBox)
-            builder.setView(view)
-            val dialog = builder.create()
-            view.findViewById<Button>(R.id.btnReset).setOnClickListener {
-                compareEmail(userEmail)
-                dialog.dismiss()
-            }
-            view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
-                dialog.dismiss()
-            }
-            if (dialog.window != null) {
-                dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
-            }
-            dialog.show()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(0))
+        dialog.show()
+    }
+
+    private fun handlePasswordReset(emailField: EditText) {
+        val email = emailField.text.toString()
+
+        if (email.isEmpty()) {
+            showToast("Email cannot be empty")
+            return
         }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showToast("Invalid email address")
+            return
+        }
+
+        firebaseAuth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    showToast("Check your email")
+                } else {
+                    showToast("Error: ${task.exception?.message}")
+                }
+            }
     }
 
     private fun navigateToDashboard() {
-        val intent = Intent(this, ShopOwnerDashboardActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
+        Intent(this, ShopOwnerDashboardActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(this)
+        }
         finish()
     }
 
-    private fun compareEmail(email: EditText) {
-        val emailText = email.text.toString()
-        if (emailText.isEmpty()) {
-            Toast.makeText(this, "Email cannot be empty", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
-            Toast.makeText(this, "Invalid email address", Toast.LENGTH_SHORT).show()
-            return
-        }
-        firebaseAuth.sendPasswordResetEmail(emailText)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "Check your email", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Error: " + task.exception?.message, Toast.LENGTH_SHORT).show()
-                }
-            }
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
