@@ -6,7 +6,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,15 +28,15 @@ class ShoppingCartActivity : AppCompatActivity() {
         }
         binding.itemImageView.setImageResource(itemImageResource)
 
-        val itemQuantityEditText: EditText = findViewById(R.id.itemQuantityEditText)
-        val totalPriceTextView: TextView = findViewById(R.id.totalPrice)
-        totalPriceTextView.text = getString(R.string.price_format, itemPrice)
+        val itemQuantityText: EditText = findViewById(R.id.itemQuantityEditText)
+        val totalPriceView: TextView = findViewById(R.id.totalPrice)
+        totalPriceView.text = getString(R.string.price_format, itemPrice)
 
-        itemQuantityEditText.addTextChangedListener(object : TextWatcher {
+        itemQuantityText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val quantity = s.toString().toIntOrNull() ?: 0
                 val totalPrice = itemPrice * quantity
-                totalPriceTextView.text = getString(R.string.price_format, totalPrice)
+                totalPriceView.text = getString(R.string.price_format, totalPrice)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -46,7 +45,7 @@ class ShoppingCartActivity : AppCompatActivity() {
 
         val checkoutButton: Button = findViewById(R.id.checkoutButton)
         checkoutButton.setOnClickListener {
-            val quantity = itemQuantityEditText.text.toString().toIntOrNull() ?: 0
+            val quantity = itemQuantityText.text.toString().toIntOrNull() ?: 0
             if (quantity > 0) {
                 val intent = Intent(this, TransactionActivity::class.java)
                 intent.putExtra("itemName", itemName)
@@ -55,7 +54,7 @@ class ShoppingCartActivity : AppCompatActivity() {
                 intent.putExtra("itemQuantity", quantity)
                 startActivity(intent)
             } else {
-                Toast.makeText(this, "Please enter a valid quantity", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter a valid quantity or number", Toast.LENGTH_SHORT).show()
             }
         }
     }
