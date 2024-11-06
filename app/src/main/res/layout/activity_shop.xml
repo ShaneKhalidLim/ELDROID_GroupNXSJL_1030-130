@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ShopActivity">
+
+    <RelativeLayout
+        android:id="@+id/firstLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/darkGreen">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/darkGreen"
+            android:src="@drawable/ic_backbutton"/>
+
+        <ImageButton
+            android:id="@+id/locateImgBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_locate"
+            android:background="@color/darkGreen"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+
+
+    <ImageView
+        android:id="@+id/shopImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/border"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/default_shop_image"
+        android:layout_below="@id/firstLayout"/>
+
+    <TextView
+        android:id="@+id/shopName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shopImage"
+        android:layout_centerHorizontal="true"
+        android:text="Shop Name"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:background="@drawable/smooth_rectangle"
+        android:padding="5dp"
+        android:layout_marginBottom="20dp"/>
+
+    <ListView
+        android:id="@+id/shopItemsListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shopName"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/border"/>
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/shopItemsListView"/>
+
+</RelativeLayout>

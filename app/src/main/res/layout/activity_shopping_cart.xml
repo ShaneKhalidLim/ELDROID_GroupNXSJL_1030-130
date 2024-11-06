@@ -1,0 +1,135 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ShoppingCartActivity">
+
+    <ImageView
+        android:id="@+id/title"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/newsouvseeklogo"/>
+
+    <RelativeLayout
+        android:id="@+id/firstLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:layout_below="@id/title"
+        android:background="@drawable/smooth_rectangle">
+
+        <TextView
+            android:id="@+id/shoppingcart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shopping Cart"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:padding="16dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+
+        android:id="@+id/secondLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_below="@id/firstLayout"
+        android:background="@drawable/border">
+
+        <TextView
+            android:id="@+id/item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Item:"
+            android:textSize="20dp"
+            android:paddingLeft="10dp"
+            android:textColor="@color/white"/>
+
+        <ImageView
+            android:id="@+id/itemImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/default_shop_image"
+            android:padding="10dp"
+            android:layout_below="@id/item"/>
+
+        <TextView
+            android:id="@+id/itemNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Item Name"
+            android:layout_below="@id/item"
+            android:textSize="18sp"
+            android:layout_toRightOf="@id/itemImageView"
+            android:textColor="@color/white"
+            android:padding="16dp"/>
+
+        <EditText
+            android:id="@+id/itemQuantityEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/itemNameTextView"
+            android:layout_toRightOf="@id/itemImageView"
+            android:hint="Enter Quantity"
+            android:textColorHint="@color/white"
+            android:textSize="18sp"
+            android:inputType="number"
+            android:textColor="@color/white"
+            android:padding="16dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/thirdLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginRight="100dp"
+        android:layout_marginLeft="100dp"
+        android:background="@drawable/smooth_rectangle"
+        android:layout_below="@id/secondLayout">
+
+        <TextView
+            android:id="@+id/ttlTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total:"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:id="@+id/totalPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total"
+            android:layout_below="@id/ttlTextView"
+            android:textColor="@color/white"
+            android:paddingLeft="20dp"
+            android:textSize="20dp"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/checkoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:background="@drawable/smooth_rectangle"
+        android:layout_marginBottom="20dp"
+        android:text="Checkout"
+        android:textColor="@color/white" />
+
+
+</RelativeLayout>

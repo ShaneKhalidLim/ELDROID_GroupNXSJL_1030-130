@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "550455604481",
+    "project_id": "souvseek-81ecd",
+    "storage_bucket": "souvseek-81ecd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550455604481:android:27129462bc23982d83d700",
+        "android_client_info": {
+          "package_name": "com.limyusontudtud.souvseek"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtLkr1Av0ZIubyy0qAUQC_pzxadIFOAaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

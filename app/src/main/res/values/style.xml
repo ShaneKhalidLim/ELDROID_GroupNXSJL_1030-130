@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="queryHint">@color/query_hint_color</item>
+        <item name="android:textColorHint">@color/query_hint_color</item>
+    </style>
+    <style name="BottomNavigationTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">15dp</item>
+    </style>
+</resources>

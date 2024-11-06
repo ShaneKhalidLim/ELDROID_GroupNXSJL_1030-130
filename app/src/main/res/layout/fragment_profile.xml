@@ -1,0 +1,99 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/firstLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingBottom="10dp"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/profileImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/profile"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="20dp"/>
+
+        <TextView
+            android:id="@+id/profileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/profileImg"
+            android:text="Jonathan Dunkit"
+            android:textSize="25dp"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/profileGmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/profileName"
+            android:text="jonathan@gmail.com"
+            android:textColor="@android:color/black"/>
+
+        <ImageButton
+            android:id="@+id/subscriptionBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_subscription"
+            android:background="@color/white"
+            android:layout_alignParentRight="true"
+            android:paddingTop="20dp"
+            android:paddingRight="20dp"/>
+
+        <ImageButton
+            android:id="@+id/signoutBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_logout"
+            android:background="@color/white"
+            android:layout_below="@id/subscriptionBtn"
+            android:layout_alignParentRight="true"
+            android:paddingTop="80dp"
+            android:paddingRight="15dp"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="100dp"
+        android:layout_alignParentRight="true">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/firstLayout"
+        android:background="@drawable/smooth_rectangle"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/subscriptionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subscription Duration:"
+            android:textColor="@color/white"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:id="@+id/subscriptionDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:textSize="20dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+</RelativeLayout>
