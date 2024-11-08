@@ -5,10 +5,10 @@ SouvSeek: This app enables tourists and shop owners to engage in seamless transa
 
 
 Eldroid Members:
-Shane Khalid Lim - Project Manager
-Liam Nicholas Tudtud - Designer
-Joseph Anthony W. Yuson - Developer
-Niko Herbias - Developer
+Shane Khalid Lim - Project Manager,
+Liam Nicholas Tudtud - Designer,
+Joseph Anthony W. Yuson - Developer,
+Niko Herbias - Developer,
 Xerxes Maroliña - QA
 
 
