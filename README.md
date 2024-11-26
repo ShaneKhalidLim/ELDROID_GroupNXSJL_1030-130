@@ -18,3 +18,5 @@ Php Repo Link: https://github.com/ShaneKhalidLim/PHP_GroupNXSJL_FRI1030-130.git
 
 Docs Link/Actual Docs: https://docs.google.com/document/d/1tZZgWQ5iV5zDWB9iZ611BHlsiN9eQiKzjLVE6CtfG6s/edit?usp=sharing
 
+Test Plan Link: https://docs.google.com/spreadsheets/d/1sqFmiK4rY-CbzyhuzymvbInpXg2wlUvK_wzOuft2U14/edit?usp=sharing
+
