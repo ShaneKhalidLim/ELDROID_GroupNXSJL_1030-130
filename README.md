@@ -14,7 +14,7 @@ Xerxes Maroliña - QA
 
 Android Repo Link: https://github.com/ShaneKhalidLim/ELDROID_GroupNXSJL_FRI1030-130.git
 
-Php Repo Link:
+Php Repo Link: https://github.com/ShaneKhalidLim/PHP_GroupNXSJL_FRI1030-130.git
 
 Docs Link/Actual Docs: https://docs.google.com/document/d/1tZZgWQ5iV5zDWB9iZ611BHlsiN9eQiKzjLVE6CtfG6s/edit?usp=sharing
 
