@@ -1,22 +1,19 @@
 package com.limyusontudtud.souvseek.fragments
 
 import com.limyusontudtud.souvseek.R
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.limyusontudtud.souvseek.DataClass
+import com.limyusontudtud.souvseek.DatabaseHelper
 import com.limyusontudtud.souvseek.MyAdapter
 import com.limyusontudtud.souvseek.UploadActivity
 
@@ -24,15 +21,12 @@ class ShopOwnerHomeFragment : Fragment() {
 
     private lateinit var fabAdd: FloatingActionButton
     private lateinit var fabUpdate: FloatingActionButton
-    private lateinit var databaseReference: DatabaseReference
-    private lateinit var eventListener: ValueEventListener
     private lateinit var recyclerView: RecyclerView
     private lateinit var dataList: ArrayList<DataClass>
     private lateinit var adapter: MyAdapter
     private lateinit var searchView: SearchView
-    private val PREFS_NAME = "ShopOwnerHomePrefs"
-    private val DATA_LIST_KEY = "DataList"
     private lateinit var dialog: AlertDialog
+    private lateinit var databaseHelper: DatabaseHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +34,7 @@ class ShopOwnerHomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_shop_owner_home, container, false)
 
+        // Initialize views
         recyclerView = view.findViewById(R.id.recyclerView)
         fabAdd = view.findViewById(R.id.fab_add)
         fabUpdate = view.findViewById(R.id.fab_update)
@@ -48,40 +43,23 @@ class ShopOwnerHomeFragment : Fragment() {
         searchView.clearFocus()
         recyclerView.layoutManager = GridLayoutManager(context, 1)
 
+        // Initialize alert dialog for loading
         val builder = AlertDialog.Builder(requireContext())
         builder.setCancelable(false)
-//        builder.setView(R.layout.progress_layout)
         dialog = builder.create()
 
+        // Initialize data and adapter
         dataList = ArrayList()
         adapter = MyAdapter(requireContext(), dataList)
         recyclerView.adapter = adapter
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Android Tutorials")
+        // Initialize DatabaseHelper
+        databaseHelper = DatabaseHelper(requireContext())
 
-        // Load saved data
-        loadSavedData()
+        // Load data from SQLite database
+        loadDataFromSQLite()
 
-        eventListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                dataList.clear()
-                for (itemSnapshot in snapshot.children) {
-                    val dataClass = itemSnapshot.getValue(DataClass::class.java)
-                    dataClass?.key = itemSnapshot.key
-                    dataList.add(dataClass!!)
-                }
-                adapter.notifyDataSetChanged()
-                dialog.dismiss()
-
-                // Save data
-                saveData()
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                dialog.dismiss()
-            }
-        }
-
+        // Search functionality
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -93,39 +71,38 @@ class ShopOwnerHomeFragment : Fragment() {
             }
         })
 
+        // Add new item
         fabAdd.setOnClickListener {
             startActivity(Intent(requireContext(), UploadActivity::class.java))
         }
 
+        // Refresh data
         fabUpdate.setOnClickListener {
             dialog.show()
-            databaseReference.addListenerForSingleValueEvent(eventListener)
+            loadDataFromSQLite()
         }
-
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0 && fabAdd.isShown) {
-                    fabAdd.hide()
-                    fabUpdate.hide()
-                } else if (dy < 0 && !fabAdd.isShown) {
-                    fabAdd.show()
-                    fabUpdate.show()
-                }
-            }
-        })
 
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun loadDataFromSQLite() {
         dialog.show()
-        databaseReference.addValueEventListener(eventListener)
-    }
+        dataList.clear()
 
-    override fun onPause() {
-        super.onPause()
-        databaseReference.removeEventListener(eventListener)
+        val cursor = databaseHelper.readAllShops()
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id")) // Fetch the ID
+                val title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
+                val imageUrl = cursor.getString(cursor.getColumnIndexOrThrow("image_url"))
+
+                val dataClass = DataClass(id, title, imageUrl)
+                dataList.add(dataClass)
+            } while (cursor.moveToNext())
+        }
+        cursor?.close()
+        adapter.notifyDataSetChanged()
         dialog.dismiss()
     }
 
@@ -137,25 +114,5 @@ class ShopOwnerHomeFragment : Fragment() {
             }
         }
         adapter.searchDataList(searchList)
-    }
-
-    private fun saveData() {
-        val sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val json = gson.toJson(dataList)
-        editor.putString(DATA_LIST_KEY, json)
-        editor.apply()
-    }
-
-    private fun loadSavedData() {
-        val sharedPreferences = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreferences.getString(DATA_LIST_KEY, null)
-        if (json != null) {
-            val type = object : TypeToken<ArrayList<DataClass>>() {}.type
-            dataList = gson.fromJson(json, type)
-            adapter.updateDataList(dataList)
-        }
     }
 }
