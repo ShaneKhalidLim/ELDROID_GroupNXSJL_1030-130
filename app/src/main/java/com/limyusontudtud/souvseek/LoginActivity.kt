@@ -34,20 +34,60 @@ class LoginActivity : AppCompatActivity() {
                 loginUser(email, password)
             } else {
                 Toast.makeText(this, "Email and password cannot be empty", Toast.LENGTH_SHORT).show()
+        // Set up listeners for the login, signup, and forgot password actions
+        setupClickListeners()
+    }
+
+    private fun setupClickListeners() {
+        binding.login.setOnClickListener { performLogin() }
+        binding.textViewSignUp.setOnClickListener { navigateToSignUp() }
+        binding.forgotPassword.setOnClickListener { showForgotPasswordDialog() }
+    }
+
+    private fun performLogin() {
+        val email = binding.emailEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
+
+        if (email.isNotEmpty() && password.isNotEmpty()) {
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    PrefsManager.setLoggedIn(this, email, true)
+                    navigateToDashboard()
+                } else {
+                    showToast(task.exception.toString())
+                }
             }
+        } else {
+            showToast("Fields cannot be empty")
         }
+    }
 
         // Handle "Sign Up" text click
         binding.textViewSignUp.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
+    private fun navigateToSignUp() {
+        Intent(this, RegistrationActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(this)
         }
+    }
 
         // Handle "Forgot Password" text click
         binding.forgotPassword.setOnClickListener {
             showForgotPasswordDialog()
+    private fun showForgotPasswordDialog() {
+        val builder = AlertDialog.Builder(this)
+        val view = layoutInflater.inflate(R.layout.dialog_forgot, null)
+        val userEmail = view.findViewById<EditText>(R.id.emailBox)
+
+        builder.setView(view)
+        val dialog = builder.create()
+
+        view.findViewById<Button>(R.id.btnReset).setOnClickListener {
+            handlePasswordReset(userEmail)
+            dialog.dismiss()
         }
-    }
 
     private fun loginUser(email: String, password: String) {
         // Step 1: Validate credentials with the PHP backend
@@ -146,6 +186,33 @@ class LoginActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+        view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(0))
+        dialog.show()
+    }
+
+    private fun handlePasswordReset(emailField: EditText) {
+        val email = emailField.text.toString()
+
+        if (email.isEmpty()) {
+            showToast("Email cannot be empty")
+            return
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showToast("Invalid email address")
+            return
+        }
+
+        firebaseAuth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    showToast("Check your email")
+                } else {
+                    showToast("Error: ${task.exception?.message}")
                 }
 
                 override fun onFailure(call: Call<ForgotPasswordResponse>, t: Throwable) {
@@ -162,5 +229,17 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, ShopOwnerDashboardActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun navigateToDashboard() {
+        Intent(this, ShopOwnerDashboardActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(this)
+        }
+        finish()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

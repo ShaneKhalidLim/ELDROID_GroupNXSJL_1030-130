@@ -1,27 +1,7 @@
 package com.limyusontudtud.souvseek
 
-class DataClass() {
-    var dataTitle: String? = null
-        get() = field
-        set(value) {
-            field = value
-        }
-
-    var dataImage: String? = null
-        get() = field
-        set(value) {
-            field = value
-        }
-
-    var key: String? = null
-        get() = field
-        set(value) {
-            field = value
-        }
-
-    constructor(dataTitle: String, dataImage: String) : this() {
-        this.dataTitle = dataTitle
-        this.dataImage = dataImage
-    }
-}
-
+data class DataClass(
+    val id: Int,             // Unique ID for the item
+    val dataTitle: String?,  // Title of the item
+    val dataImage: String?   // Image URL of the item
+)

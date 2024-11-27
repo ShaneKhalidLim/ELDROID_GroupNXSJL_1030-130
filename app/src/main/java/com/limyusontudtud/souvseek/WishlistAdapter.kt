@@ -8,36 +8,38 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class WishlistAdapter(private val items: MutableList<WishlistItem>) :
-    RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder>() {
-
-    var onDeleteClick: ((WishlistItem) -> Unit)? = null
+class WishlistAdapter(
+    private val items: List<WishlistItem>,
+    private val onDeleteClick: (WishlistItem) -> Unit
+) : RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WishlistViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_wishlist, parent, false)
-        return WishlistViewHolder(view)
+        return WishlistViewHolder(view, onDeleteClick)
     }
 
     override fun onBindViewHolder(holder: WishlistViewHolder, position: Int) {
-        val item = items[position]
-        holder.itemName.text = item.name
-        holder.itemPrice.text = holder.itemView.context.getString(R.string.price_format, item.price)
-        holder.itemImage.setImageResource(item.imageResource)
+        holder.bind(items[position])
+    }
 
-        holder.deleteButton.setOnClickListener {
-            onDeleteClick?.invoke(item)
+    override fun getItemCount() = items.size
+
+    class WishlistViewHolder(
+        itemView: View,
+        private val onDeleteClick: (WishlistItem) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val itemName: TextView = itemView.findViewById(R.id.wishlistItemName)
+        private val itemPrice: TextView = itemView.findViewById(R.id.wishlistItemPrice)
+        private val itemImage: ImageView = itemView.findViewById(R.id.wishlistItemImage)
+        private val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
+
+        fun bind(item: WishlistItem) {
+            itemName.text = item.name
+            itemPrice.text = itemView.context.getString(R.string.price_format, item.price)
+            itemImage.setImageResource(item.imageResource)
+            deleteButton.setOnClickListener { onDeleteClick(item) }
         }
-    }
-
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
-    class WishlistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val itemName: TextView = itemView.findViewById(R.id.wishlistItemName)
-        val itemPrice: TextView = itemView.findViewById(R.id.wishlistItemPrice)
-        val itemImage: ImageView = itemView.findViewById(R.id.wishlistItemImage)
-        val deleteButton: Button = itemView.findViewById(R.id.deleteButton)
     }
 }
