@@ -5,19 +5,18 @@ import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
 import com.limyusontudtud.souvseek.databinding.ActivityRegistrationBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegistrationBinding
-    private lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        firebaseAuth = FirebaseAuth.getInstance()
 
         binding.registerButton.setOnClickListener {
             val email = binding.emailEditText.text.toString().trim()
@@ -45,20 +44,44 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun registerUser(email: String, password: String) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Registration failed: ${task.exception?.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        RetrofitInstance.api.registerUser(email, password)
+            .enqueue(object : Callback<RegistrationResponse> {
+                override fun onResponse(
+                    call: Call<RegistrationResponse>,
+                    response: Response<RegistrationResponse>
+                ) {
+                    if (response.isSuccessful && response.body()?.status == "success") {
+                        // Registration was successful on the server
+                        Toast.makeText(this@RegistrationActivity, "Registration successful", Toast.LENGTH_SHORT).show()
+
+                        // Local database handling (optional if only storing remotely)
+                        val dbHelper = DatabaseHelper(this@RegistrationActivity)
+                        val isInserted = dbHelper.insertUser(email, password)
+
+                        if (isInserted) {
+                            Toast.makeText(this@RegistrationActivity, "User saved locally", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@RegistrationActivity, "Failed to save user locally", Toast.LENGTH_SHORT).show()
+                        }
+
+                        // Proceed to LoginActivity after successful registration
+                        val intent = Intent(this@RegistrationActivity, LoginActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        // Handle server registration failure
+                        val message = response.body()?.message ?: "Registration failed"
+                        Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
+
+                override fun onFailure(call: Call<RegistrationResponse>, t: Throwable) {
+                    // Handle network or server errors
+                    Toast.makeText(this@RegistrationActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
+
+
 }
